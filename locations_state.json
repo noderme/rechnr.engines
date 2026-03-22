@@ -1,0 +1,462 @@
+[
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk mitte",
+    "scraped": true
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk friedrichshain-kreuzberg",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk pankow",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk charlottenburg-wilmersdorf",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk spandau",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk steglitz-zehlendorf",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk tempelhof-schöneberg",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk neukölln",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk treptow-köpenick",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk marzahn-hellersdorf",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk lichtenberg",
+    "scraped": false
+  },
+  {
+    "city": "Berlin",
+    "slug": "berlin bezirk reinickendorf",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk hamburg-mitte",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk altona",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk eimsbüttel",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk hamburg-nord",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk wandsbek",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk bergedorf",
+    "scraped": false
+  },
+  {
+    "city": "Hamburg",
+    "slug": "hamburg bezirk harburg",
+    "scraped": false
+  },
+  {
+    "city": "München",
+    "slug": "münchen",
+    "scraped": false
+  },
+  {
+    "city": "Köln",
+    "slug": "köln",
+    "scraped": false
+  },
+  {
+    "city": "Köln",
+    "slug": "köln innenstadt",
+    "scraped": false
+  },
+  {
+    "city": "Frankfurt",
+    "slug": "frankfurt am main",
+    "scraped": false
+  },
+  {
+    "city": "Stuttgart",
+    "slug": "stuttgart",
+    "scraped": false
+  },
+  {
+    "city": "Düsseldorf",
+    "slug": "düsseldorf",
+    "scraped": false
+  },
+  {
+    "city": "Dortmund",
+    "slug": "dortmund",
+    "scraped": false
+  },
+  {
+    "city": "Essen",
+    "slug": "essen",
+    "scraped": false
+  },
+  {
+    "city": "Leipzig",
+    "slug": "leipzig",
+    "scraped": false
+  },
+  {
+    "city": "Bremen",
+    "slug": "bremen",
+    "scraped": false
+  },
+  {
+    "city": "Dresden",
+    "slug": "dresden",
+    "scraped": false
+  },
+  {
+    "city": "Hannover",
+    "slug": "hannover",
+    "scraped": false
+  },
+  {
+    "city": "Nürnberg",
+    "slug": "nürnberg",
+    "scraped": false
+  },
+  {
+    "city": "Bonn",
+    "slug": "bonn",
+    "scraped": false
+  },
+  {
+    "city": "Münster",
+    "slug": "münster",
+    "scraped": false
+  },
+  {
+    "city": "Karlsruhe",
+    "slug": "karlsruhe",
+    "scraped": false
+  },
+  {
+    "city": "Wiesbaden",
+    "slug": "wiesbaden",
+    "scraped": false
+  },
+  {
+    "city": "Augsburg",
+    "slug": "augsburg",
+    "scraped": false
+  },
+  {
+    "city": "Aachen",
+    "slug": "aachen",
+    "scraped": false
+  },
+  {
+    "city": "Chemnitz",
+    "slug": "chemnitz",
+    "scraped": false
+  },
+  {
+    "city": "Kiel",
+    "slug": "kiel",
+    "scraped": false
+  },
+  {
+    "city": "Halle",
+    "slug": "halle (saale)",
+    "scraped": false
+  },
+  {
+    "city": "Magdeburg",
+    "slug": "magdeburg",
+    "scraped": false
+  },
+  {
+    "city": "Freiburg",
+    "slug": "freiburg im breisgau",
+    "scraped": false
+  },
+  {
+    "city": "Krefeld",
+    "slug": "krefeld",
+    "scraped": false
+  },
+  {
+    "city": "Lübeck",
+    "slug": "lübeck",
+    "scraped": false
+  },
+  {
+    "city": "Oberhausen",
+    "slug": "oberhausen",
+    "scraped": false
+  },
+  {
+    "city": "Erfurt",
+    "slug": "erfurt",
+    "scraped": false
+  },
+  {
+    "city": "Rostock",
+    "slug": "rostock",
+    "scraped": false
+  },
+  {
+    "city": "Mainz",
+    "slug": "mainz",
+    "scraped": false
+  },
+  {
+    "city": "Kassel",
+    "slug": "kassel",
+    "scraped": false
+  },
+  {
+    "city": "Hagen",
+    "slug": "hagen",
+    "scraped": false
+  },
+  {
+    "city": "Saarbrücken",
+    "slug": "saarbrücken",
+    "scraped": false
+  },
+  {
+    "city": "Mönchengladbach",
+    "slug": "mönchengladbach",
+    "scraped": false
+  },
+  {
+    "city": "Braunschweig",
+    "slug": "braunschweig",
+    "scraped": false
+  },
+  {
+    "city": "Koblenz",
+    "slug": "koblenz",
+    "scraped": false
+  },
+  {
+    "city": "Trier",
+    "slug": "trier",
+    "scraped": false
+  },
+  {
+    "city": "Heidelberg",
+    "slug": "heidelberg",
+    "scraped": false
+  },
+  {
+    "city": "Regensburg",
+    "slug": "regensburg",
+    "scraped": false
+  },
+  {
+    "city": "Ingolstadt",
+    "slug": "ingolstadt",
+    "scraped": false
+  },
+  {
+    "city": "Ulm",
+    "slug": "ulm",
+    "scraped": false
+  },
+  {
+    "city": "Würzburg",
+    "slug": "würzburg",
+    "scraped": false
+  },
+  {
+    "city": "Wolfsburg",
+    "slug": "wolfsburg",
+    "scraped": false
+  },
+  {
+    "city": "Mannheim",
+    "slug": "mannheim",
+    "scraped": false
+  },
+  {
+    "city": "Darmstadt",
+    "slug": "darmstadt",
+    "scraped": false
+  },
+  {
+    "city": "Potsdam",
+    "slug": "potsdam",
+    "scraped": false
+  },
+  {
+    "city": "Bochum",
+    "slug": "bochum",
+    "scraped": false
+  },
+  {
+    "city": "Wuppertal",
+    "slug": "wuppertal",
+    "scraped": false
+  },
+  {
+    "city": "Bielefeld",
+    "slug": "bielefeld",
+    "scraped": false
+  },
+  {
+    "city": "Gelsenkirchen",
+    "slug": "gelsenkirchen",
+    "scraped": false
+  },
+  {
+    "city": "Mülheim",
+    "slug": "mülheim an der ruhr",
+    "scraped": false
+  },
+  {
+    "city": "Paderborn",
+    "slug": "paderborn",
+    "scraped": false
+  },
+  {
+    "city": "Duisburg",
+    "slug": "duisburg",
+    "scraped": false
+  },
+  {
+    "city": "Hildesheim",
+    "slug": "hildesheim",
+    "scraped": false
+  },
+  {
+    "city": "Osnabrück",
+    "slug": "osnabrück",
+    "scraped": false
+  },
+  {
+    "city": "Solingen",
+    "slug": "solingen",
+    "scraped": false
+  },
+  {
+    "city": "Ludwigshafen",
+    "slug": "ludwigshafen am rhein",
+    "scraped": false
+  },
+  {
+    "city": "Oldenburg",
+    "slug": "oldenburg",
+    "scraped": false
+  },
+  {
+    "city": "Neuss",
+    "slug": "neuss",
+    "scraped": false
+  },
+  {
+    "city": "Fürth",
+    "slug": "fürth",
+    "scraped": false
+  },
+  {
+    "city": "Erlangen",
+    "slug": "erlangen",
+    "scraped": false
+  },
+  {
+    "city": "Bayreuth",
+    "slug": "bayreuth",
+    "scraped": false
+  },
+  {
+    "city": "Siegen",
+    "slug": "siegen",
+    "scraped": false
+  },
+  {
+    "city": "Cottbus",
+    "slug": "cottbus",
+    "scraped": false
+  },
+  {
+    "city": "Schwerin",
+    "slug": "schwerin",
+    "scraped": false
+  },
+  {
+    "city": "Göttingen",
+    "slug": "göttingen",
+    "scraped": false
+  },
+  {
+    "city": "Recklinghausen",
+    "slug": "recklinghausen",
+    "scraped": false
+  },
+  {
+    "city": "Bottrop",
+    "slug": "bottrop",
+    "scraped": false
+  },
+  {
+    "city": "Bremerhaven",
+    "slug": "bremerhaven",
+    "scraped": false
+  },
+  {
+    "city": "Heilbronn",
+    "slug": "heilbronn",
+    "scraped": false
+  },
+  {
+    "city": "Pforzheim",
+    "slug": "pforzheim",
+    "scraped": false
+  },
+  {
+    "city": "Offenbach",
+    "slug": "offenbach am main",
+    "scraped": false
+  },
+  {
+    "city": "Remscheid",
+    "slug": "remscheid",
+    "scraped": false
+  }
+]

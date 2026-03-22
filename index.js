@@ -30,6 +30,17 @@ const DATA_DIR        = process.env.DATA_DIR || __dirname;
 const STATE_FILE      = path.join(DATA_DIR, "locations_state.json");
 const LAST_SCRAPE_FILE = path.join(DATA_DIR, "last_scrape.json");
 
+// On first run, copy bundled state files to DATA_DIR if not present
+function initDataDir() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  const bundled = path.join(__dirname, "locations_state.json");
+  if (!fs.existsSync(STATE_FILE) && fs.existsSync(bundled)) {
+    fs.copyFileSync(bundled, STATE_FILE);
+    console.log(`✓ Initialised ${STATE_FILE} from bundled seed`);
+  }
+}
+initDataDir();
+
 // Week → daily limit mapping
 const WEEK_LIMITS = { 1: 10, 2: 15, 3: 20, 4: 30 };
 const DEFAULT_LIMIT = 50; // week 5+
