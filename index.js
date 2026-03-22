@@ -182,13 +182,13 @@ function schedule() {
   cron.schedule("0 10 * * *", runScrapeAndEnrich, { timezone: TZ });
   console.log("  Scheduled: 10:00 IST daily → scraper + findEmails");
 
-  // 13:30 IST (09:00 CET) Tue+Wed — send Email 1
-  cron.schedule("30 13 * * 2,3", runSend, { timezone: TZ });
-  console.log("  Scheduled: 13:30 IST Tue+Wed → send Email 1 (09:00 CET)");
+  // 13:30 IST (09:00 CET) Mon-Fri — send Email 1
+  cron.schedule("30 13 * * 1-5", runSend, { timezone: TZ });
+  console.log("  Scheduled: 13:30 IST Mon-Fri → send Email 1 (09:00 CET)");
 
-  // 13:45 IST (09:15 CET) Tue+Wed — send Email 2 follow-up
-  cron.schedule("45 13 * * 2,3", runFollowup, { timezone: TZ });
-  console.log("  Scheduled: 13:45 IST Tue+Wed → followup Email 2 (09:15 CET)");
+  // 13:45 IST (09:15 CET) Mon-Fri — send Email 2 follow-up
+  cron.schedule("45 13 * * 1-5", runFollowup, { timezone: TZ });
+  console.log("  Scheduled: 13:45 IST Mon-Fri → followup Email 2 (09:15 CET)");
 }
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ async function main() {
   console.log(`   Progress     : ${doneLocs} / ${totalLocs} locations scraped`);
   console.log(`   Last city    : ${lastCity?.city ?? "none"}`);
   console.log(`   Last scrape  : ${daysSinceScrape}`);
-  console.log(`   Next email   : Tue/Wed 13:30 IST (09:00 CET)\n`);
+  console.log(`   Next email   : Mon-Fri 13:30 IST (09:00 CET)\n`);
 
   schedule();
 
