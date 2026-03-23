@@ -1,35 +1,37 @@
 "use strict";
 /**
- * ZeroBounce email verification helper.
- * Calls the ZeroBounce single-address validate API and returns the status string.
+ * Reoon email verification helper.
+ * Calls the Reoon single-address verify API and returns the status string.
  *
- * Possible statuses: valid | invalid | catch-all | unknown | spamtrap | abuse | do_not_mail
+ * Possible statuses: valid | invalid | catch_all | disposable | spamtrap | unknown
  * Only 'valid' should be sent to.
  *
- * Docs: https://www.zerobounce.net/docs/email-validation-api-quickstart/
+ * Docs: https://emailverifier.reoon.com/docs/
  */
 
 require("dotenv").config();
 const axios = require("axios");
 
-const API_KEY = process.env.ZEROBOUNCE_API_KEY;
+const API_KEY = process.env.REOON_API_KEY;
 
 /**
- * Verify a single email address via ZeroBounce.
+ * Verify a single email address via Reoon.
  * Returns the status string, or 'unknown' on error.
  */
 async function verifyEmail(email) {
   if (!API_KEY) {
-    console.warn("[ZeroBounce] ZEROBOUNCE_API_KEY not set — skipping verification");
+    console.warn("[Reoon] REOON_API_KEY not set — skipping verification");
     return "unknown";
   }
 
   try {
-    const url = `https://api.zerobounce.net/v2/validate?api_key=${encodeURIComponent(API_KEY)}&email=${encodeURIComponent(email)}&ip_address=`;
-    const { data } = await axios.get(url, { timeout: 10_000 });
+    const { data } = await axios.get("https://emailverifier.reoon.com/api/v1/verify", {
+      params: { email, key: API_KEY, mode: "quick" },
+      timeout: 10_000,
+    });
     return (data.status || "unknown").toLowerCase();
   } catch (err) {
-    console.error(`[ZeroBounce] Error verifying ${email}: ${err.message}`);
+    console.error(`[Reoon] Error verifying ${email}: ${err.message}`);
     return "unknown";
   }
 }
