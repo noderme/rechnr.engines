@@ -1,1 +1,1 @@
-worker: node index.js
+worker: node migrate.js && node index.js
