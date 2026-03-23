@@ -45,9 +45,20 @@ async function incrementSentToday(conn, count) {
   );
 }
 
+/** Simple heuristic: treat as person name only if it's 2-3 short words with no company keywords. */
+function looksLikePersonName(n) {
+  if (!n || typeof n !== "string") return false;
+  const s = n.trim();
+  const words = s.split(/\s+/);
+  if (words.length < 2 || words.length > 4) return false;
+  const companyHints = /steuerber|kanzlei|partner|gmbh|gbr|&|gesellschaft|büro|beratung|consulting|treuhand|wirtschafts/i;
+  if (companyHints.test(s)) return false;
+  return true;
+}
+
 function buildEmail1(prospect) {
   const { name, email } = prospect;
-  const greeting = name ? `Guten Tag ${name},` : "Guten Tag,";
+  const greeting = looksLikePersonName(name) ? `Guten Tag ${name.trim()},` : "Guten Tag,";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
 
   const subject = "KoSIT-Validierung für E-Rechnungen Ihrer Mandanten";
