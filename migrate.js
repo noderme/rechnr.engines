@@ -51,6 +51,22 @@ async function migrate() {
     `);
     console.log("✓ email_config defaults set");
 
+    // Add email_status column if not present (ZeroBounce verification result)
+    try {
+      await conn.execute(`
+        ALTER TABLE steuerberater_prospects
+        ADD COLUMN email_status VARCHAR(20) NULL DEFAULT NULL
+        COMMENT 'ZeroBounce status: valid|invalid|catch-all|unknown|spamtrap|abuse|do_not_mail'
+      `);
+      console.log("✓ Column email_status added");
+    } catch (e) {
+      if (e.code === "ER_DUP_FIELDNAME") {
+        console.log("✓ Column email_status already exists");
+      } else {
+        throw e;
+      }
+    }
+
   } finally {
     conn.release();
     await pool.end();

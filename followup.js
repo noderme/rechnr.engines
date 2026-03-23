@@ -12,8 +12,9 @@
  */
 
 require("dotenv").config();
-const { Resend } = require("resend");
-const pool       = require("./db");
+const { Resend }      = require("resend");
+const pool            = require("./db");
+const { verifyEmail } = require("./zerobounce");
 
 const args    = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
@@ -31,6 +32,10 @@ function buildEmail2(prospect) {
 
   const subject = "Kurze Nachfrage – rechnr.app für Ihre Mandanten";
 
+  const sentDate = prospect.email1_sent_at
+    ? new Date(prospect.email1_sent_at).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
+    : "letzter Woche";
+
   const html = `
 <!DOCTYPE html>
 <html lang="de">
@@ -39,16 +44,14 @@ function buildEmail2(prospect) {
 
   <p>${greeting}</p>
 
-  <p>kurze Nachfrage zu meiner E-Mail von letzter Woche.</p>
+  <p>ich wollte kurz nachfragen, ob meine E-Mail vom ${sentDate} angekommen ist.</p>
 
-  <p>Viele Ihrer Mandanten werden Sie bald fragen: <em>Was muss ich wegen der E-Rechnungspflicht tun?</em></p>
+  <p>Falls Ihre Mandanten noch keine konforme E-Rechnungslösung nutzen — <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> ist sofort einsatzbereit, komplett kostenlos und deckt den kompletten Rechnungsworkflow ab: erstellen, validieren, senden und empfangen.</p>
 
-  <p>Mit <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> haben Sie eine fertige Antwort — kostenlos für Freiberufler, und Sie verdienen <strong>5 €/Monat</strong> für jeden Business-Kunden.</p>
-
-  <p><a href="${BASE_URL}" style="color:#2563eb;">→ rechnr.app</a></p>
+  <p>Gerne beantworte ich Fragen oder stelle Informationsmaterial bereit.</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
-  <strong>${process.env.RESEND_FROM_NAME}</strong><br>
+  <strong>Das rechnr Team</strong><br>
   <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
 
   <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
@@ -69,11 +72,12 @@ async function main() {
   const conn = await pool.getConnection();
 
   const [prospects] = await conn.execute(
-    `SELECT id, kanzlei_name, name, city, email
+    `SELECT id, kanzlei_name, name, city, email, email1_sent_at, email_status
      FROM steuerberater_prospects
      WHERE outreach_status = 'email1_sent'
        AND email1_sent_at <= DATE_SUB(NOW(), INTERVAL 5 DAY)
        AND email2_sent_at IS NULL
+       AND (email_status IS NULL OR email_status = 'valid')
      ORDER BY email1_sent_at ASC
      LIMIT 15`
   );
@@ -81,8 +85,24 @@ async function main() {
   console.log(`Sending follow-ups to ${prospects.length} prospects\n`);
 
   for (const p of prospects) {
-    const { subject, html } = buildEmail2(p);
     process.stdout.write(`→ ${p.email} (${p.kanzlei_name}, ${p.city}) ... `);
+
+    // Re-verify if status unknown (shouldn't happen but safety net)
+    if (p.email_status === null || p.email_status === undefined) {
+      const status = await verifyEmail(p.email);
+      await conn.execute(
+        `UPDATE steuerberater_prospects SET email_status = ? WHERE id = ?`,
+        [status, p.id]
+      );
+      if (status !== "valid") {
+        console.log(`[skip] ZeroBounce: ${status}`);
+        await sleep(SLEEP_MS);
+        continue;
+      }
+      p.email_status = status;
+    }
+
+    const { subject, html } = buildEmail2(p);
 
     if (DRY_RUN) {
       console.log(`[dry-run] subject: "${subject}"`);

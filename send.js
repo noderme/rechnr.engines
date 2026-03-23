@@ -10,8 +10,9 @@
  */
 
 require("dotenv").config();
-const { Resend } = require("resend");
-const pool       = require("./db");
+const { Resend }      = require("resend");
+const pool            = require("./db");
+const { verifyEmail } = require("./zerobounce");
 
 const args    = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
@@ -49,7 +50,7 @@ function buildEmail1(prospect) {
   const greeting = name ? `Sehr geehrte/r ${name},` : "Sehr geehrte Damen und Herren,";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
 
-  const subject = "Ihre Mandanten & E-Rechnungspflicht ab 2027 – kostenloses Tool + Provision";
+  const subject = "Ihre Mandanten senden & empfangen jetzt GoBD-konforme ZUGFeRD-Rechnungen – kostenlos";
 
   const html = `
 <!DOCTYPE html>
@@ -59,16 +60,25 @@ function buildEmail1(prospect) {
 
   <p>${greeting}</p>
 
-  <p>ab Januar 2027 müssen alle deutschen Unternehmen mit einem Jahresumsatz über 800.000 € E-Rechnungen ausstellen – ab 2028 gilt dies für <strong>alle</strong>.</p>
+  <p>ab 2025 gilt die E-Rechnungspflicht für B2B-Umsätze in Deutschland. Viele Ihrer Mandanten sind noch nicht vorbereitet.</p>
 
-  <p>Ich habe <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt: das einzige kostenlose Tool das Rechnungen in Echtzeit mit dem <strong>offiziellen KoSIT-Validator der Bundesregierung</strong> prüft — demselben Tool das DATEV und Behörden verwenden.</p>
+  <p><strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> ist eine kostenlose E-Rechnungsplattform für Freelancer und Kleinunternehmer:</p>
 
-  <p>Für jeden Ihrer Mandanten der rechnr.app als Business-Kunde nutzt erhalten Sie dauerhaft <strong>5 € pro Monat</strong>.</p>
+  <ul style="line-height:2;">
+    <li>✅ Rechnungen erstellen, senden &amp; empfangen — alles in einem</li>
+    <li>✅ ZUGFeRD 2.3 &amp; EN 16931 — maschinenlesbar, DATEV-kompatibel</li>
+    <li>✅ KoSIT &amp; Mustang Validierung — nur konforme Rechnungen werden versendet</li>
+    <li>✅ PDF/A-3 — GoBD-konform archivierbar</li>
+    <li>✅ §14 &amp; §19 UStG — Kleinunternehmerregelung inklusive</li>
+    <li>✅ Kostenlos — kein Abo, kein Setup</li>
+  </ul>
 
-  <p>Darf ich es Ihnen kurz vorstellen? Antworten Sie einfach auf diese E-Mail — ich melde mich innerhalb von 24 Stunden.</p>
+  <p>Jede Rechnung wird automatisch durch KoSIT (Bundesregierung) und Mustang geprüft, bevor sie versendet wird. Ihre Mandanten erhalten damit automatisch konforme Belege — ohne Mehraufwand für Sie.</p>
+
+  <p>Testen Sie es selbst: <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
-  <strong>${process.env.RESEND_FROM_NAME}</strong><br>
+  <strong>Das rechnr Team</strong><br>
   <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
 
   <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
@@ -103,10 +113,11 @@ async function main() {
   }
 
   const [prospects] = await conn.execute(
-    `SELECT id, kanzlei_name, name, city, email
+    `SELECT id, kanzlei_name, name, city, email, email_status
      FROM steuerberater_prospects
      WHERE email IS NOT NULL
        AND outreach_status = 'pending'
+       AND (email_status IS NULL OR email_status = 'valid')
      ORDER BY id ASC
      LIMIT ${Math.floor(remaining)}`
   );
@@ -115,8 +126,24 @@ async function main() {
 
   let sent = 0;
   for (const p of prospects) {
-    const { subject, html } = buildEmail1(p);
     process.stdout.write(`→ ${p.email} (${p.kanzlei_name}, ${p.city}) ... `);
+
+    // Verify email if not already done
+    if (p.email_status === null || p.email_status === undefined) {
+      const status = await verifyEmail(p.email);
+      await conn.execute(
+        `UPDATE steuerberater_prospects SET email_status = ? WHERE id = ?`,
+        [status, p.id]
+      );
+      if (status !== "valid") {
+        console.log(`[skip] ZeroBounce: ${status}`);
+        await sleep(SLEEP_MS);
+        continue;
+      }
+      p.email_status = status;
+    }
+
+    const { subject, html } = buildEmail1(p);
 
     if (DRY_RUN) {
       console.log(`[dry-run] "${subject}"`);
