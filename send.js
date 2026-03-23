@@ -47,10 +47,10 @@ async function incrementSentToday(conn, count) {
 
 function buildEmail1(prospect) {
   const { name, email } = prospect;
-  const greeting = name ? `Sehr geehrte/r ${name},` : "Sehr geehrte Damen und Herren,";
+  const greeting = name ? `Guten Tag ${name},` : "Guten Tag,";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
 
-  const subject = "Ihre Mandanten senden & empfangen jetzt GoBD-konforme ZUGFeRD-Rechnungen – kostenlos";
+  const subject = "KoSIT-Validierung für E-Rechnungen Ihrer Mandanten";
 
   const html = `
 <!DOCTYPE html>
@@ -60,22 +60,16 @@ function buildEmail1(prospect) {
 
   <p>${greeting}</p>
 
-  <p>ab 2025 gilt die E-Rechnungspflicht für B2B-Umsätze in Deutschland. Viele Ihrer Mandanten sind noch nicht vorbereitet.</p>
+  <p>kurze Frage: Wie prüfen Sie aktuell, ob die E-Rechnungen Ihrer Mandanten tatsächlich EN 16931-konform sind?</p>
 
-  <p><strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> ist eine kostenlose E-Rechnungsplattform für Freelancer und Kleinunternehmer:</p>
+  <p>Ich habe <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses E-Rechnungstool mit integrierter KoSIT-Validierung. Jede Rechnung wird vor dem Versand automatisch geprüft.</p>
 
-  <ul style="line-height:2;">
-    <li>✅ Rechnungen erstellen, senden &amp; empfangen — alles in einem</li>
-    <li>✅ ZUGFeRD 2.3 &amp; EN 16931 — maschinenlesbar, DATEV-kompatibel</li>
-    <li>✅ KoSIT &amp; Mustang Validierung — nur konforme Rechnungen werden versendet</li>
-    <li>✅ PDF/A-3 — GoBD-konform archivierbar</li>
-    <li>✅ §14 &amp; §19 UStG — Kleinunternehmerregelung inklusive</li>
-    <li>✅ Kostenlos — kein Abo, kein Setup</li>
-  </ul>
+  <p>Den Validator können Sie auch ohne Anmeldung kostenlos nutzen:<br>
+  <a href="${BASE_URL}/validator" style="color:#2563eb;">rechnr.app/validator</a></p>
 
-  <p>Jede Rechnung wird automatisch durch KoSIT (Bundesregierung) und Mustang geprüft, bevor sie versendet wird. Ihre Mandanten erhalten damit automatisch konforme Belege — ohne Mehraufwand für Sie.</p>
+  <p>Für Steuerberater, die rechnr.app an Mandanten empfehlen, bieten wir ein Partnerprogramm mit laufender Provision.</p>
 
-  <p>Testen Sie es selbst: <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
+  <p>Hätten Sie Interesse an einem kurzen Austausch? Antworten Sie einfach auf diese E-Mail.</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>
@@ -83,7 +77,7 @@ function buildEmail1(prospect) {
 
   <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
   <p style="font-size:11px; color:#999;">
-    Sie erhalten diese E-Mail, da Ihre Kanzlei auf steuerberater-suche.de gelistet ist.<br>
+    Sie erhalten diese E-Mail, da Ihre Kanzlei öffentlich gelistet ist.<br>
     <a href="${unsubUrl}" style="color:#999;">Abmelden</a>
   </p>
 
