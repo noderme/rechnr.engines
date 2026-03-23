@@ -95,7 +95,11 @@ async function main() {
         [status, p.id]
       );
       if (status !== "valid") {
-        console.log(`[skip] ZeroBounce: ${status}`);
+        await conn.execute(
+          `UPDATE steuerberater_prospects SET email_status = ?, outreach_status = 'invalid_email' WHERE id = ?`,
+          [status, p.id]
+        );
+        console.log(`[skip] ZeroBounce: ${status} → marked invalid_email`);
         await sleep(SLEEP_MS);
         continue;
       }

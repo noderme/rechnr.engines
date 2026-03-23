@@ -67,6 +67,25 @@ async function migrate() {
       }
     }
 
+    // Add 'invalid_email' to outreach_status ENUM if not already present
+    try {
+      await conn.execute(`
+        ALTER TABLE steuerberater_prospects
+        MODIFY COLUMN outreach_status ENUM(
+          'pending',
+          'email1_sent',
+          'email2_sent',
+          'replied',
+          'unsubscribed',
+          'invalid_email'
+        ) DEFAULT 'pending'
+      `);
+      console.log("✓ outreach_status ENUM updated with 'invalid_email'");
+    } catch (e) {
+      console.error("✗ Failed to update outreach_status ENUM:", e.message);
+      throw e;
+    }
+
   } finally {
     conn.release();
     await pool.end();

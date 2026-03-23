@@ -117,7 +117,6 @@ async function main() {
      FROM steuerberater_prospects
      WHERE email IS NOT NULL
        AND outreach_status = 'pending'
-       AND (email_status IS NULL OR email_status = 'valid')
      ORDER BY id ASC
      LIMIT ${Math.floor(remaining)}`
   );
@@ -131,16 +130,20 @@ async function main() {
     // Verify email if not already done
     if (p.email_status === null || p.email_status === undefined) {
       const status = await verifyEmail(p.email);
-      await conn.execute(
-        `UPDATE steuerberater_prospects SET email_status = ? WHERE id = ?`,
-        [status, p.id]
-      );
       if (status !== "valid") {
-        console.log(`[skip] ZeroBounce: ${status}`);
+        await conn.execute(
+          `UPDATE steuerberater_prospects SET email_status = ?, outreach_status = 'invalid_email' WHERE id = ?`,
+          [status, p.id]
+        );
+        console.log(`[skip] ZeroBounce: ${status} → marked invalid_email`);
         await sleep(SLEEP_MS);
         continue;
       }
-      p.email_status = status;
+      await conn.execute(
+        `UPDATE steuerberater_prospects SET email_status = 'valid' WHERE id = ?`,
+        [p.id]
+      );
+      p.email_status = "valid";
     }
 
     const { subject, html } = buildEmail1(p);
