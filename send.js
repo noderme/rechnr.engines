@@ -59,7 +59,8 @@ function looksLikePersonName(n) {
 function buildEmail1(prospect) {
   const { name, email } = prospect;
   const greeting = looksLikePersonName(name) ? `Guten Tag ${name.trim()},` : "Guten Tag,";
-  const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
+  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v1";
+  const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
   const subject = "KoSIT-Validierung für E-Rechnungen Ihrer Mandanten";
 
@@ -73,10 +74,10 @@ function buildEmail1(prospect) {
 
   <p>kurze Frage: Wie prüfen Sie aktuell, ob die E-Rechnungen Ihrer Mandanten tatsächlich EN 16931-konform sind?</p>
 
-  <p>Ich habe <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses E-Rechnungstool mit integrierter KoSIT-Validierung. Jede Rechnung wird vor dem Versand automatisch geprüft.</p>
+  <p>Ich habe <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses E-Rechnungstool mit integrierter KoSIT-Validierung. Jede Rechnung wird vor dem Versand automatisch geprüft.</p>
 
   <p>Den Validator können Sie auch ohne Anmeldung kostenlos nutzen:<br>
-  <a href="${BASE_URL}/validator" style="color:#2563eb;">rechnr.app/validator</a></p>
+  <a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
 
   <p>Für Steuerberater, die rechnr.app an Mandanten empfehlen, bieten wir ein Partnerprogramm mit laufender Provision.</p>
 
@@ -84,7 +85,7 @@ function buildEmail1(prospect) {
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>
-  <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
+  <a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></p>
 
   <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
   <p style="font-size:11px; color:#999;">

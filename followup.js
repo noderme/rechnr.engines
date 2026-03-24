@@ -27,10 +27,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function buildEmail2(prospect) {
   const { name, email } = prospect;
-  const greeting = name ? `Sehr geehrte/r ${name},` : "Sehr geehrte Damen und Herren,";
-  const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}`;
+  const greeting = name ? `Guten Tag ${name.trim()},` : "Guten Tag,";
+  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-followup-v1";
+  const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
-  const subject = "Kurze Nachfrage – rechnr.app für Ihre Mandanten";
+  const subject = "Kurze Nachfrage: E-Rechnungen & KoSIT-Validierung";
 
   const sentDate = prospect.email1_sent_at
     ? new Date(prospect.email1_sent_at).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
@@ -46,13 +47,17 @@ function buildEmail2(prospect) {
 
   <p>ich wollte kurz nachfragen, ob meine E-Mail vom ${sentDate} angekommen ist.</p>
 
-  <p>Falls Ihre Mandanten noch keine konforme E-Rechnungslösung nutzen — <strong><a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></strong> ist sofort einsatzbereit, komplett kostenlos und deckt den kompletten Rechnungsworkflow ab: erstellen, validieren, senden und empfangen.</p>
+  <p>Viele Steuerberater nutzen aktuell unseren kostenlosen Validator, um die E-Rechnungen ihrer Mandanten auf KoSIT-Konformität zu prüfen:</p>
 
-  <p>Gerne beantworte ich Fragen oder stelle Informationsmaterial bereit.</p>
+  <p><a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
+
+  <p>Falls Sie oder Ihre Mandanten noch eine einfache, kostenlose Lösung für den ZUGFeRD 2.3 Standard suchen, schauen Sie sich <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> gerne an.</p>
+
+  <p>Hätten Sie nächste Woche 5 Minuten Zeit für einen kurzen Austausch zum Partnerprogramm?</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>
-  <a href="${BASE_URL}" style="color:#2563eb;">rechnr.app</a></p>
+  <a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></p>
 
   <hr style="border:none; border-top:1px solid #eee; margin-top:40px;">
   <p style="font-size:11px; color:#999;">
