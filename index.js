@@ -7,7 +7,8 @@
  *   02:00 daily     → scraper.js (one zip) — self-throttles to every 2 days
  *                     → findEmails.js for the active city's new leads
  *   09:00 Tue+Wed   → send.js (Email 1, ramping daily limit)
- *   09:15 Tue+Wed   → followup.js (Email 2, 5-day follow-up)
+ *   09:15 Tue+Wed   → followup.js (Email 2, 4-day follow-up)
+ *   09:30 Tue+Wed   → followup2.js (Email 3, 9-day breakup)
  *
  * Usage:
  *   node index.js
@@ -141,6 +142,11 @@ async function runFollowup() {
   await run("followup.js", args, "FOLLOWUP");
 }
 
+async function runFollowup2() {
+  const args = DRY_RUN ? ["--dry-run"] : [];
+  await run("followup2.js", args, "FOLLOWUP2");
+}
+
 /** Midnight: reset daily counter. Advance week on Mondays. */
 async function midnightReset() {
   const conn = await pool.getConnection();
@@ -186,9 +192,13 @@ function schedule() {
   cron.schedule("30 13 * * 1-5", runSend, { timezone: TZ });
   console.log("  Scheduled: 13:30 IST Mon-Fri → send Email 1 (09:00 CET)");
 
-  // 13:45 IST (09:15 CET) Mon-Fri — send Email 2 follow-up
+  // 13:45 IST (09:15 CET) Mon-Fri — send Email 2 follow-up (4-day gap)
   cron.schedule("45 13 * * 1-5", runFollowup, { timezone: TZ });
   console.log("  Scheduled: 13:45 IST Mon-Fri → followup Email 2 (09:15 CET)");
+
+  // 14:00 IST (09:30 CET) Mon-Fri — send Email 3 breakup (9-day gap)
+  cron.schedule("0 14 * * 1-5", runFollowup2, { timezone: TZ });
+  console.log("  Scheduled: 14:00 IST Mon-Fri → breakup Email 3 (09:30 CET)");
 }
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
@@ -213,7 +223,9 @@ async function main() {
   console.log(`   Progress     : ${doneLocs} / ${totalLocs} locations scraped`);
   console.log(`   Last city    : ${lastCity?.city ?? "none"}`);
   console.log(`   Last scrape  : ${daysSinceScrape}`);
-  console.log(`   Next email   : Mon-Fri 13:30 IST (09:00 CET)\n`);
+  console.log(`   Email 1      : Mon-Fri 13:30 IST (09:00 CET)`);
+  console.log(`   Email 2      : Mon-Fri 13:45 IST (09:15 CET) — 4-day gap`);
+  console.log(`   Email 3      : Mon-Fri 14:00 IST (09:30 CET) — 9-day gap\n`);
 
   schedule();
 

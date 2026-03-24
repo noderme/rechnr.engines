@@ -2,7 +2,7 @@
 /**
  * Step 4 — Cold email engine (Email 1).
  * Daily limit ramps up week-by-week from email_config table:
- *   Week 1 = 15, Week 2 = 20, Week 3 = 30, Week 4+ = 50
+ *   Week 1 = 10, Week 2 = 15, Week 3 = 20, Week 4+ = 50
  *
  * Usage:
  *   node send.js           # live
@@ -31,7 +31,7 @@ async function getConfig(conn) {
   // First run — insert defaults
   await conn.execute(`
     INSERT INTO email_config (id, current_week, daily_limit, emails_sent_today, last_reset_date)
-    VALUES (1, 1, 15, 0, CURDATE())
+    VALUES (1, 1, 10, 0, CURDATE())
   `);
   const [r] = await conn.execute(`SELECT * FROM email_config WHERE id = 1`);
   return r[0];
@@ -59,10 +59,10 @@ function looksLikePersonName(n) {
 function buildEmail1(prospect) {
   const { name, email } = prospect;
   const greeting = looksLikePersonName(name) ? `Guten Tag ${name.trim()},` : "Guten Tag,";
-  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v1";
+  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v2";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
-  const subject = "KoSIT-Validierung für E-Rechnungen Ihrer Mandanten";
+  const subject = "E-Rechnungspflicht: Wie prüfen Sie die Rechnungen Ihrer Mandanten?";
 
   const html = `
 <!DOCTYPE html>
@@ -72,16 +72,16 @@ function buildEmail1(prospect) {
 
   <p>${greeting}</p>
 
-  <p>kurze Frage: Wie prüfen Sie aktuell, ob die E-Rechnungen Ihrer Mandanten tatsächlich EN 16931-konform sind?</p>
+  <p>ab 2025 müssen alle Unternehmen E-Rechnungen empfangen können, ab 2027 wird auch der Versand für Kleinunternehmer Pflicht.</p>
 
-  <p>Ich habe <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses E-Rechnungstool mit integrierter KoSIT-Validierung. Jede Rechnung wird vor dem Versand automatisch geprüft.</p>
+  <p>Die Realität: Viele Mandanten werden anfangs fehlerhafte PDFs oder ungültige XML-Dateien schicken. Das bedeutet für Ihre Kanzlei mehr manuelle Prüfarbeit und Rückfragen.</p>
 
-  <p>Den Validator können Sie auch ohne Anmeldung kostenlos nutzen:<br>
+  <p>Wir haben <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses Tool, mit dem Ihre Mandanten automatisch ZUGFeRD 2.3 konforme Rechnungen erstellen können (direkt DATEV-kompatibel).</p>
+
+  <p>Um zu sehen, wie streng die Anforderungen sind, können Sie unseren kostenlosen Validator testen. Er nutzt das offizielle KoSIT-Prüftool:<br>
   <a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
 
-  <p>Für Steuerberater, die rechnr.app an Mandanten empfehlen, bieten wir ein Partnerprogramm mit laufender Provision.</p>
-
-  <p>Hätten Sie Interesse an einem kurzen Austausch? Antworten Sie einfach auf diese E-Mail.</p>
+  <p>Hätten Sie nächste Woche 10 Minuten Zeit für einen kurzen Austausch, wie rechnr.app Ihre Kanzlei entlasten kann?</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>

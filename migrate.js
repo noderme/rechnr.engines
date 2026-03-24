@@ -20,11 +20,14 @@ async function migrate() {
           'pending',
           'email1_sent',
           'email2_sent',
+          'email3_sent',
           'replied',
-          'unsubscribed'
+          'unsubscribed',
+          'invalid_email'
         ) DEFAULT 'pending',
         email1_sent_at    DATETIME NULL,
         email2_sent_at    DATETIME NULL,
+        email3_sent_at    DATETIME NULL,
         replied_at        DATETIME NULL,
         created_at        DATETIME DEFAULT NOW(),
         UNIQUE KEY uq_website (website),
@@ -67,7 +70,23 @@ async function migrate() {
       }
     }
 
-    // Add 'invalid_email' to outreach_status ENUM if not already present
+    // Add email3_sent_at column if not present
+    try {
+      await conn.execute(`
+        ALTER TABLE steuerberater_prospects
+        ADD COLUMN email3_sent_at DATETIME NULL DEFAULT NULL
+        AFTER email2_sent_at
+      `);
+      console.log("✓ Column email3_sent_at added");
+    } catch (e) {
+      if (e.code === "ER_DUP_FIELDNAME") {
+        console.log("✓ Column email3_sent_at already exists");
+      } else {
+        throw e;
+      }
+    }
+
+    // Update outreach_status ENUM to include email3_sent
     try {
       await conn.execute(`
         ALTER TABLE steuerberater_prospects
@@ -75,12 +94,13 @@ async function migrate() {
           'pending',
           'email1_sent',
           'email2_sent',
+          'email3_sent',
           'replied',
           'unsubscribed',
           'invalid_email'
         ) DEFAULT 'pending'
       `);
-      console.log("✓ outreach_status ENUM updated with 'invalid_email'");
+      console.log("✓ outreach_status ENUM updated with 'email3_sent'");
     } catch (e) {
       console.error("✗ Failed to update outreach_status ENUM:", e.message);
       throw e;

@@ -1,14 +1,16 @@
 "use strict";
 /**
- * Step 4b — Follow-up engine (Email 2).
- * Sends Email 2 to prospects where:
- *   - outreach_status = 'email1_sent'
- *   - email1_sent_at was >= 4 days ago
- *   - email2_sent_at IS NULL
+ * Step 4c — Final follow-up engine (Email 3 — breakup).
+ * Sends Email 3 to prospects where:
+ *   - outreach_status = 'email2_sent'
+ *   - email1_sent_at was >= 9 days ago
+ *   - email3_sent_at IS NULL
+ *
+ * This is the final email in the sequence. Polite breakup — no further emails after this.
  *
  * Usage:
- *   node followup.js           # live
- *   node followup.js --dry-run # preview only
+ *   node followup2.js           # live
+ *   node followup2.js --dry-run # preview only
  */
 
 require("dotenv").config();
@@ -35,14 +37,13 @@ function looksLikePersonName(n) {
   return true;
 }
 
-function buildEmail2(prospect) {
+function buildEmail3(prospect) {
   const { name, email } = prospect;
   const greeting = looksLikePersonName(name) ? `Guten Tag ${name.trim()},` : "Guten Tag,";
-  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-followup-v2";
+  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-breakup-v2";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
-  // Use "Re:" prefix to appear as a reply in the inbox
-  const subject = "Re: E-Rechnungspflicht: Wie prüfen Sie die Rechnungen Ihrer Mandanten?";
+  const subject = "Letzter Versuch: E-Rechnungen für Ihre Mandanten";
 
   const html = `
 <!DOCTYPE html>
@@ -52,20 +53,14 @@ function buildEmail2(prospect) {
 
   <p>${greeting}</p>
 
-  <p>ich wollte kurz nachhaken, ob Sie schon Gelegenheit hatten, unseren Validator zu testen.</p>
+  <p>da ich bisher nichts von Ihnen gehört habe, gehe ich davon aus, dass das Thema E-Rechnung für Ihre Mandanten aktuell keine Priorität hat oder Sie bereits eine Lösung gefunden haben.</p>
 
-  <p>Ein großes Problem für viele Kanzleien ist aktuell, dass Mandanten weiterhin Word- oder Excel-Vorlagen nutzen wollen. Mit rechnr.app bleibt die Bedienung genauso einfach, aber im Hintergrund wird eine technisch einwandfreie ZUGFeRD-Rechnung (EN 16931) generiert.</p>
+  <p>Falls Sie in Zukunft ein einfaches, kostenloses Tool suchen, das Sie Ihren Freelancern und Kleinunternehmern empfehlen können, behalten Sie <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> gerne im Hinterkopf.</p>
 
-  <p>Ihre Vorteile, wenn Mandanten rechnr nutzen:</p>
-  <ul style="padding-left: 20px;">
-    <li>100% KoSIT-validierte Rechnungen</li>
-    <li>Eingebettetes XML wird von DATEV automatisch erkannt</li>
-    <li>Keine Rückfragen wegen falscher Formate</li>
-  </ul>
+  <p>Den kostenlosen Validator für ZUGFeRD und XRechnung finden Sie jederzeit hier:<br>
+  <a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
 
-  <p>Das Tool ist für Freelancer und Kleinunternehmer komplett kostenlos.</p>
-
-  <p>Darf ich Ihnen in einem kurzen 10-Minuten-Call zeigen, wie einfach das für Ihre Mandanten ist?</p>
+  <p>Ich wünsche Ihnen eine erfolgreiche Woche und melde mich nicht weiter.</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>
@@ -84,29 +79,29 @@ function buildEmail2(prospect) {
 }
 
 async function main() {
-  console.log("=== Follow-up Sender (Email 2) ===");
+  console.log("=== Final Follow-up Sender (Email 3 — Breakup) ===");
   if (DRY_RUN) console.log("DRY RUN — no emails sent");
 
   const conn = await pool.getConnection();
 
-  // 4-day gap from Email 1
+  // 9 days after Email 1 (which is ~5 days after Email 2)
   const [prospects] = await conn.execute(
     `SELECT id, kanzlei_name, name, city, email, email1_sent_at, email_status
      FROM steuerberater_prospects
-     WHERE outreach_status = 'email1_sent'
-       AND email1_sent_at <= DATE_SUB(NOW(), INTERVAL 4 DAY)
-       AND email2_sent_at IS NULL
+     WHERE outreach_status = 'email2_sent'
+       AND email1_sent_at <= DATE_SUB(NOW(), INTERVAL 9 DAY)
+       AND email3_sent_at IS NULL
        AND (email_status IS NULL OR email_status = 'valid')
      ORDER BY email1_sent_at ASC
      LIMIT 15`
   );
 
-  console.log(`Sending follow-ups to ${prospects.length} prospects\n`);
+  console.log(`Sending breakup emails to ${prospects.length} prospects\n`);
 
   for (const p of prospects) {
     process.stdout.write(`→ ${p.email} (${p.kanzlei_name}, ${p.city}) ... `);
 
-    const { subject, html } = buildEmail2(p);
+    const { subject, html } = buildEmail3(p);
 
     if (DRY_RUN) {
       console.log(`[dry-run] subject: "${subject}"`);
@@ -123,7 +118,7 @@ async function main() {
 
       await conn.execute(
         `UPDATE steuerberater_prospects
-         SET outreach_status = 'email2_sent', email2_sent_at = NOW()
+         SET outreach_status = 'email3_sent', email3_sent_at = NOW()
          WHERE id = ?`,
         [p.id]
       );
