@@ -62,7 +62,7 @@ function buildEmail1(prospect) {
   const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v2";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
-  const subject = "E-Rechnungspflicht: Wie prüfen Sie die Rechnungen Ihrer Mandanten?";
+  const subject = "E-Rechnungspflicht 2027 – kennen Ihre Mandanten das Problem?";
 
   const html = `
 <!DOCTYPE html>
@@ -72,16 +72,14 @@ function buildEmail1(prospect) {
 
   <p>${greeting}</p>
 
-  <p>ab 2025 müssen alle Unternehmen E-Rechnungen empfangen können, ab 2027 wird auch der Versand für Kleinunternehmer Pflicht.</p>
+  <p>viele Ihrer Mandanten werden ab 2027 E-Rechnungen ausstellen müssen — aber die meisten wissen noch nicht, dass eine normale PDF dafür nicht ausreicht.</p>
 
-  <p>Die Realität: Viele Mandanten werden anfangs fehlerhafte PDFs oder ungültige XML-Dateien schicken. Das bedeutet für Ihre Kanzlei mehr manuelle Prüfarbeit und Rückfragen.</p>
+  <p>Das häufigste Problem: Mandanten exportieren aus Lexoffice oder sevDesk im falschen Profil (BASIC statt EN 16931) und merken es erst, wenn eine Rechnung abgelehnt wird.</p>
 
-  <p>Wir haben <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> entwickelt — ein kostenloses Tool, mit dem Ihre Mandanten automatisch ZUGFeRD 2.3 konforme Rechnungen erstellen können (direkt DATEV-kompatibel).</p>
+  <p>Wir haben <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> gebaut — ein kostenloses Tool das konforme ZUGFeRD 2.3 Rechnungen erstellt und jede Rechnung automatisch mit dem offiziellen KoSIT-Validator der Bundesregierung prüft. DATEV-kompatibel, direkt einsatzbereit.</p>
 
-  <p>Um zu sehen, wie streng die Anforderungen sind, können Sie unseren kostenlosen Validator testen. Er nutzt das offizielle KoSIT-Prüftool:<br>
+  <p>Falls Sie Ihren Mandanten eine fertige Lösung empfehlen möchten — den Validator können Sie kostenlos selbst testen:<br>
   <a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
-
-  <p>Hätten Sie nächste Woche 10 Minuten Zeit für einen kurzen Austausch, wie rechnr.app Ihre Kanzlei entlasten kann?</p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
   <strong>Das rechnr Team</strong><br>
