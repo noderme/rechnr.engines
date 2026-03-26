@@ -109,20 +109,25 @@ async function main() {
     }
 
     try {
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from: `${process.env.RESEND_FROM_NAME} <${process.env.RESEND_FROM_EMAIL}>`,
         to:   p.email,
         subject,
         html,
+        tags: [
+          { name: "prospect_id", value: String(p.id) },
+          { name: "email_type",  value: "email3" },
+        ],
       });
 
       await conn.execute(
         `UPDATE steuerberater_prospects
-         SET outreach_status = 'email3_sent', email3_sent_at = NOW()
+         SET outreach_status = 'email3_sent', email3_sent_at = NOW(),
+             resend_email3_id = ?
          WHERE id = ?`,
-        [p.id]
+        [result.data?.id ?? null, p.id]
       );
-      console.log("✓ sent");
+      console.log(`✓ sent (${result.data?.id})`);
     } catch (err) {
       console.error(`✗ ${err.message}`);
     }

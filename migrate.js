@@ -106,6 +106,31 @@ async function migrate() {
       throw e;
     }
 
+    // Add Resend message ID + open/click tracking columns
+    const trackingCols = [
+      ["resend_email1_id",  "VARCHAR(255) NULL"],
+      ["resend_email2_id",  "VARCHAR(255) NULL"],
+      ["resend_email3_id",  "VARCHAR(255) NULL"],
+      ["email1_opened_at",  "DATETIME NULL"],
+      ["email1_clicked_at", "DATETIME NULL"],
+      ["email2_opened_at",  "DATETIME NULL"],
+      ["email2_clicked_at", "DATETIME NULL"],
+      ["email3_opened_at",  "DATETIME NULL"],
+      ["email3_clicked_at", "DATETIME NULL"],
+    ];
+    for (const [col, def] of trackingCols) {
+      try {
+        await conn.execute(`ALTER TABLE steuerberater_prospects ADD COLUMN ${col} ${def}`);
+        console.log(`✓ Column ${col} added`);
+      } catch (e) {
+        if (e.code === "ER_DUP_FIELDNAME") {
+          console.log(`  Column ${col} already exists`);
+        } else {
+          throw e;
+        }
+      }
+    }
+
   } finally {
     conn.release();
     await pool.end();
