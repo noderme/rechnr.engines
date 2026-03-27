@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(ls -la /Users/madmax/steuerberater-engine/.env*)",
+      "Bash(heroku config:get DATABASE_URL -a steuerberater-engine)",
+      "Bash(heroku apps:*)",
+      "Bash(heroku logs:*)"
+    ]
+  }
+}
