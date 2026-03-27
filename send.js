@@ -10,10 +10,8 @@
  */
 
 require("dotenv").config();
-const { Resend }      = require("resend");
-const dns             = require("dns").promises;
-const pool            = require("./db");
-const { verifyEmail } = require("./zerobounce");
+const { Resend } = require("resend");
+const pool       = require("./db");
 
 const args    = process.argv.slice(2);
 const DRY_RUN = args.includes("--dry-run");
@@ -23,18 +21,6 @@ const BASE_URL = process.env.RECHNR_BASE_URL || "https://rechnr.app";
 const SLEEP_MS = 500;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-/** Returns true if the email's domain has at least one MX record. */
-async function hasMxRecord(email) {
-  const domain = email.split("@")[1];
-  if (!domain) return false;
-  try {
-    const records = await dns.resolveMx(domain);
-    return records.length > 0;
-  } catch {
-    return false;
-  }
-}
 
 /** Get current config row — initialises row if missing. */
 async function getConfig(conn) {
@@ -132,8 +118,8 @@ async function main() {
   const [prospects] = await conn.execute(
     `SELECT id, kanzlei_name, name, city, email, email_status
      FROM steuerberater_prospects
-     WHERE email IS NOT NULL
-       AND outreach_status = 'pending'
+     WHERE outreach_status = 'pending'
+       AND email_status IN ('valid', 'catch-all')
      ORDER BY id ASC
      LIMIT ${Math.floor(remaining)}`
   );
@@ -143,36 +129,6 @@ async function main() {
   let sent = 0;
   for (const p of prospects) {
     process.stdout.write(`→ ${p.email} (${p.kanzlei_name}, ${p.city}) ... `);
-
-    // MX record check — skip immediately if domain has no mail server
-    if (!await hasMxRecord(p.email)) {
-      await conn.execute(
-        `UPDATE steuerberater_prospects SET email_status = 'invalid', outreach_status = 'invalid_email' WHERE id = ?`,
-        [p.id]
-      );
-      console.log(`[skip] No MX record → marked invalid_email`);
-      await sleep(SLEEP_MS);
-      continue;
-    }
-
-    // Verify email if not already done
-    if (p.email_status === null || p.email_status === undefined) {
-      const status = await verifyEmail(p.email);
-      if (status !== "valid") {
-        await conn.execute(
-          `UPDATE steuerberater_prospects SET email_status = ?, outreach_status = 'invalid_email' WHERE id = ?`,
-          [status, p.id]
-        );
-        console.log(`[skip] ZeroBounce: ${status} → marked invalid_email`);
-        await sleep(SLEEP_MS);
-        continue;
-      }
-      await conn.execute(
-        `UPDATE steuerberater_prospects SET email_status = 'valid' WHERE id = ?`,
-        [p.id]
-      );
-      p.email_status = "valid";
-    }
 
     const { subject, html } = buildEmail1(p);
 
