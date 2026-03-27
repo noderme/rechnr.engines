@@ -61,11 +61,10 @@ async function main() {
   const conn = await pool.getConnection();
 
   const [rows] = await conn.execute(
-    `SELECT id, email
+    `SELECT id, email, outreach_status
      FROM steuerberater_prospects
      WHERE email IS NOT NULL
        AND email_status IS NULL
-       AND outreach_status = 'pending'
      ORDER BY id ASC
      LIMIT ${LIMIT}`
   );
