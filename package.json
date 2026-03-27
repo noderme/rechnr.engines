@@ -10,6 +10,8 @@
     "followup": "node followup.js",
     "followup2": "node followup2.js",
     "export": "node exportContacts.js",
+    "enrich": "node enrich.js",
+    "enrich:mx": "node enrich.js --mx-only",
     "migrate": "node migrate.js",
     "start": "node index.js"
   },

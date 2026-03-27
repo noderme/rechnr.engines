@@ -11,6 +11,7 @@
 
 require("dotenv").config();
 const { Resend }      = require("resend");
+const dns             = require("dns").promises;
 const pool            = require("./db");
 const { verifyEmail } = require("./zerobounce");
 
@@ -22,6 +23,18 @@ const BASE_URL = process.env.RECHNR_BASE_URL || "https://rechnr.app";
 const SLEEP_MS = 500;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/** Returns true if the email's domain has at least one MX record. */
+async function hasMxRecord(email) {
+  const domain = email.split("@")[1];
+  if (!domain) return false;
+  try {
+    const records = await dns.resolveMx(domain);
+    return records.length > 0;
+  } catch {
+    return false;
+  }
+}
 
 /** Get current config row — initialises row if missing. */
 async function getConfig(conn) {
@@ -130,6 +143,17 @@ async function main() {
   let sent = 0;
   for (const p of prospects) {
     process.stdout.write(`→ ${p.email} (${p.kanzlei_name}, ${p.city}) ... `);
+
+    // MX record check — skip immediately if domain has no mail server
+    if (!await hasMxRecord(p.email)) {
+      await conn.execute(
+        `UPDATE steuerberater_prospects SET email_status = 'invalid', outreach_status = 'invalid_email' WHERE id = ?`,
+        [p.id]
+      );
+      console.log(`[skip] No MX record → marked invalid_email`);
+      await sleep(SLEEP_MS);
+      continue;
+    }
 
     // Verify email if not already done
     if (p.email_status === null || p.email_status === undefined) {

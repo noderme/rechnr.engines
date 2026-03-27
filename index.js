@@ -43,8 +43,8 @@ function initDataDir() {
 initDataDir();
 
 // Week → daily limit mapping
-const WEEK_LIMITS = { 1: 10, 2: 15, 3: 20, 4: 30 };
-const DEFAULT_LIMIT = 50; // week 5+
+const WEEK_LIMITS = { 1: 5, 2: 5, 3: 5, 4: 5 };
+const DEFAULT_LIMIT = 5; // week 5+
 
 function weekLimit(week) {
   return WEEK_LIMITS[week] ?? DEFAULT_LIMIT;
@@ -129,6 +129,12 @@ async function runScrapeAndEnrich() {
     const emailArgs = ["--city", target.city, "--limit", "50"];
     if (DRY_RUN) emailArgs.push("--dry-run");
     await run("findEmails.js", emailArgs, `EMAILS ${target.city}`);
+
+    // 3. Enrich new emails — MX check + ZeroBounce validation
+    console.log(`\n[ENRICH] Validating new emails for ${target.city}...`);
+    const enrichArgs = ["--limit", "100"];
+    if (DRY_RUN) enrichArgs.push("--dry-run");
+    await run("enrich.js", enrichArgs, `ENRICH ${target.city}`);
   }
 }
 
