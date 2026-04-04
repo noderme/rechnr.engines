@@ -58,10 +58,10 @@ function looksLikePersonName(n) {
 function buildEmail1(prospect) {
   const { name, email } = prospect;
   const greeting = looksLikePersonName(name) ? `Guten Tag ${name.trim()},` : "Guten Tag,";
-  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v2";
+  const utmParams = "utm_source=cold-email&utm_medium=email&utm_campaign=steuerberater-outreach-v3";
   const unsubUrl = `${BASE_URL}/api/unsubscribe?email=${encodeURIComponent(email)}&${utmParams}`;
 
-  const subject = "E-Rechnungspflicht 2027 – kennen Ihre Mandanten das Problem?";
+  const subject = "E-Rechnungspflicht 2027 – weniger Rückfragen von Mandanten";
 
   const html = `
 <!DOCTYPE html>
@@ -71,13 +71,23 @@ function buildEmail1(prospect) {
 
   <p>${greeting}</p>
 
-  <p>viele Ihrer Mandanten werden ab 2027 E-Rechnungen ausstellen müssen — aber die meisten wissen noch nicht, dass eine normale PDF dafür nicht ausreicht.</p>
+  <p>ab 2027 müssen Ihre Mandanten E-Rechnungen im ZUGFeRD- oder XRechnung-Format ausstellen — eine normale PDF reicht dann nicht mehr. Die meisten wissen das noch nicht, und wenn sie es herausfinden, landen die Fragen bei Ihnen.</p>
 
-  <p>Das häufigste Problem: Mandanten exportieren aus Lexoffice oder sevDesk im falschen Profil (BASIC statt EN 16931) und merken es erst, wenn eine Rechnung abgelehnt wird.</p>
+  <p>Das typische Problem das wir sehen: Mandanten nutzen Word, Excel oder exportieren aus bestehenden Tools im falschen Format — und merken es erst, wenn eine Rechnung vom Empfänger abgelehnt wird.</p>
 
-  <p>Wir haben <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> gebaut — ein kostenloses Tool das konforme ZUGFeRD 2.3 Rechnungen erstellt und jede Rechnung automatisch mit dem offiziellen KoSIT-Validator der Bundesregierung prüft. DATEV-kompatibel, direkt einsatzbereit.</p>
+  <p>Wir haben <strong><a href="${BASE_URL}?${utmParams}" style="color:#2563eb;">rechnr.app</a></strong> gebaut — eine kostenlose Lösung die Sie Ihren Mandanten empfehlen können:</p>
 
-  <p>Falls Sie Ihren Mandanten eine fertige Lösung empfehlen möchten — den Validator können Sie kostenlos selbst testen:<br>
+  <ul style="padding-left: 20px; line-height: 1.8;">
+    <li>Erstellt konforme <strong>ZUGFeRD 2.3 E-Rechnungen</strong> direkt im Browser — kein Download, kein Abo</li>
+    <li>Jede Rechnung wird automatisch <strong>doppelt validiert</strong>: KoSIT (offizieller Validator der Bundesregierung) + Mustang-Bibliothek</li>
+    <li><strong>DATEV-Export</strong> integriert — Buchungsstapel direkt importierbar, kein manueller Aufwand für Sie</li>
+    <li>Kleinunternehmer-Modus mit automatischem <strong>§19 UStG Hinweis</strong></li>
+    <li>100% DSGVO-konform, Server in Deutschland</li>
+  </ul>
+
+  <p>Das Ergebnis für Ihre Kanzlei: Mandanten reichen konforme Rechnungen ein, die DATEV direkt verarbeiten kann — ohne Rückfragen, ohne Korrekturen.</p>
+
+  <p>Den Validator können Sie selbst testen — ohne Registrierung, einfach eine bestehende Rechnung hochladen:<br>
   <a href="${BASE_URL}/validator?${utmParams}" style="color:#2563eb;">rechnr.app/validator</a></p>
 
   <p style="margin-top:32px;">Mit freundlichen Grüßen,<br>
